@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
+  <v-data-table :headers="headers" :items="users" sort-by="calories" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Usuários</v-toolbar-title>
@@ -87,7 +87,7 @@ export default {
       { text: 'Endereço', value: 'endereco' },
       { text: 'Ações', value: 'actions', sortable: false },
     ],
-    desserts: [],
+    users: [],
     editedIndex: -1,
     editedItem: {
       name: '',
@@ -122,7 +122,7 @@ export default {
 
   methods: {
     initialize () {
-      this.desserts = [
+      this.users = [
         {
           name: 'Victor Palasios',
           email: 'victorpalasios@elf.com',
@@ -152,19 +152,19 @@ export default {
     },
 
     editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.users.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.users.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialogDelete = true
     },
 
     deleteItemConfirm () {
-      this.desserts.splice(this.editedIndex, 1)
+      this.users.splice(this.editedIndex, 1)
       this.closeDelete()
     },
 
@@ -186,9 +186,9 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        Object.assign(this.users[this.editedIndex], this.editedItem)
       } else {
-        this.desserts.push(this.editedItem)
+        this.users.push(this.editedItem)
       }
       this.close()
     },
