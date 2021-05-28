@@ -8,12 +8,26 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: {
+      title: 'Home'
+    }
   },
   {
     path: '/user',
     name: 'User',
+    meta: {
+      title: 'Usuários'
+    },
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/publicacoes',
+    name: 'Publi',
+    meta: {
+      title: 'Publicações'
+    },
+    component: () => import('../views/Publi.vue')
   }
 ]
 

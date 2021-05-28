@@ -1,14 +1,20 @@
 <template>
-  <v-data-table :headers="headers" :items="users" sort-by="calories" class="elevation-1">
+  <v-data-table :headers="headers" :items="publicacoes" class="elevation-1">
+    <template v-slot:item.status="{ item }">
+        {{ retornapubliStatus(item.status) }}
+    </template>
+    <template v-slot:item.usuario_id="{ item }">
+        {{ retornaUsuarioPubli(item.usuario_id)  }}
+    </template>
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Usuários</v-toolbar-title>
+        <v-toolbar-title>Publicações</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              Novo Usuário
+              Nova Publicação
             </v-btn>
           </template>
           <v-card>
@@ -19,20 +25,38 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field v-model="editedItem.sobrenome" label="Sobrenome"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field v-model="editedItem.senha" label="Senha"></v-text-field>
-                  </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.descricao" label="Descrição"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="6">
+                    <v-text-field v-model="editedItem.arq_conteudo" label="Caminho Arq."></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="6">
+                    <v-select
+                      v-model="editedItem.status"
+                      :items="publiStatus"
+                      item-text="nome"
+                      item-value="id"
+                      label="Selecione o Status"
+                      single-line
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-select
+                      v-model="editedItem.usuario_id"
+                      :items="usuarios"
+                      item-text="nome"
+                      item-value="usuario_id"
+                      label="Selecione o Usuário"
+                      single-line
+                    >
+                      <template slot="selection" slot-scope="data">
+                        {{ data.item.nome }} {{ data.item.sobrenome }}
+                      </template>
+                      <template slot="item" slot-scope="data">
+                        {{ data.item.nome }} {{ data.item.sobrenome }}
+                      </template>
+                    </v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -74,23 +98,25 @@
 </template>
 
 <script>
-import { UsersDB } from '../database/database';
-import userSchema, { userColumns, getIdUser } from '../database/schemas/user';
+import { PubliDB, UsersDB } from '../database/database';
+import publiSchema, { publiColumns, getIdPubli, publiStatusObject } from '../database/schemas/publicacoes';
 
 export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    headers: userColumns,
-    users: [],
+    headers: publiColumns,
+    publicacoes: [],
     editedIndex: -1,
-    editedItem: userSchema,
-    defaultItem: userSchema,
+    editedItem: publiSchema,
+    defaultItem: publiSchema,
+    publiStatus: publiStatusObject,
+    usuarios: UsersDB.get()
   }),
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Novo Usuário' : 'Editando Usuário'
+      return this.editedIndex === -1 ? 'Nova Publicação' : 'Editando Publicação'
     },
   },
 
@@ -108,24 +134,42 @@ export default {
   },
 
   methods: {
+    retornaUsuarioPubli(value) {
+      let usuario = UsersDB.findOne({ usuario_id: value });
+      return usuario.nome + ' ' + usuario.sobrenome;
+    },
+
+    retornapubliStatus(status) {
+      switch (status) {
+        case 1:
+          return "PUBLICADO";
+        case 2: 
+          return "EM ANDAMENTO";
+        case 3:
+          return "FINALIZADO";
+        default:
+          return "Nenhum";
+      }
+    },
+
     initialize () {
-      this.users = UsersDB.get();
+      this.publicacoes = PubliDB.get();
     },
 
     editItem (item) {
-      this.editedIndex = item.usuario_id
+      this.editedIndex = item.publicacao_id
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem (item) {
-      this.editedIndex = item.usuario_id
+      this.editedIndex = item.publicacao_id
       this.editedItem = Object.assign({}, item)
       this.dialogDelete = true
     },
 
     deleteItemConfirm () {
-      UsersDB.remove('usuario_id', this.editedIndex);
+      PubliDB.remove('publicacao_id', this.editedIndex);
       this.closeDelete()
     },
 
@@ -136,7 +180,7 @@ export default {
         this.editedIndex = -1
       })
 
-      this.users = UsersDB.get();
+      this.publicacoes = PubliDB.get();
     },
 
     closeDelete () {
@@ -146,19 +190,19 @@ export default {
         this.editedIndex = -1
       })
 
-      this.users = UsersDB.get();
+      this.publicacoes = PubliDB.get();
     },
 
     save () {
       if (this.editedIndex > -1) {
-        const query = { usuario_id: this.editedIndex };
-        UsersDB.find(query).forEach(user => {
-          Object.assign(user, this.editedItem)
-          UsersDB.save(user)
-        })
+        const query = { publicacao_id: this.editedIndex };
+        PubliDB.find(query).forEach(publicacao => {
+          Object.assign(publicacao, this.editedItem);
+          PubliDB.save(publicacao);
+        });
       } else {
-        this.editedItem.usuario_id = getIdUser();
-        UsersDB.add(this.editedItem);
+        this.editedItem.publicacao_id = getIdPubli();
+        PubliDB.add(this.editedItem);
       }
       this.close()
     },

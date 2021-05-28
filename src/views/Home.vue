@@ -36,6 +36,18 @@ export default {
         text: 'Criamos toda a base do sitema com o crud de Usuário utilizando uma base simulada.',
         header: 'Feature'
       },
+      {
+        color: 'cyan',
+        year: '20/05/2021',
+        text: 'Adicionado sistema de database javascript e adicionando crud de publicações com toda ligação aos usuários.',
+        header: 'Feature'
+      },
+      {
+        color: 'cyan',
+        year: '26/05/2021',
+        text: 'Criado um chat global para todos os usuários poderem se comunicarem.',
+        header: 'Feature'
+      }
     ],
   }),
 }
