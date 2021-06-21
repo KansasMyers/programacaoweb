@@ -14,12 +14,28 @@ const routes = [
     }
   },
   {
-    path: '/user',
+    path: '/usuarios',
     name: 'User',
     meta: {
       title: 'Usuários'
     },
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/usuarios-perfil/:id',
+    name: 'UserPage',
+    meta: {
+      title: 'Usuários'
+    },
+    component: () => import('../views/UserPage.vue')
+  },
+  {
+    path: '/publicacao-perfil/:id',
+    name: 'PubliPage',
+    meta: {
+      title: 'Publicações'
+    },
+    component: () => import('../views/PubliPage.vue')
   },
   {
     path: '/publicacoes',

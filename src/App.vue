@@ -11,19 +11,33 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item>
 
-          <v-list-item link to="/user">
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Usuários</v-list-item-title>
-          </v-list-item>
+          <v-list-group :value="true" prepend-icon="mdi-account-circle" no-action>
+            <template v-slot:activator>
+              <v-list-item-title>Usuários</v-list-item-title>
+            </template>
 
-          <v-list-item link to="/publicacoes">
-            <v-list-item-icon>
-              <v-icon>mdi-note</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Publicações</v-list-item-title>
-          </v-list-item>
+            <v-list-item v-for="([title, icon, link], i) in menuAdmins" :key="i" link :to="link">
+              <v-list-item-title v-text="title"></v-list-item-title>
+
+              <v-list-item-icon>
+                <v-icon v-text="icon"></v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-group>
+
+          <v-list-group :value="true" prepend-icon="mdi-note" no-action>
+            <template v-slot:activator>
+              <v-list-item-title>Publicações</v-list-item-title>
+            </template>
+
+            <v-list-item v-for="([title, icon, link], i) in menuPubli" :key="i" link :to="link">
+              <v-list-item-title v-text="title"></v-list-item-title>
+
+              <v-list-item-icon>
+                <v-icon v-text="icon"></v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-group>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -38,28 +52,7 @@
       <router-view></router-view>
     </v-main>
 
-    <beautiful-chat
-      :participants="participants"
-      :titleImageUrl="titleImageUrl"
-      :onMessageWasSent="onMessageWasSent"
-      :messageList="messageList"
-      :newMessagesCount="newMessagesCount"
-      :isOpen="isChatOpen"
-      :close="closeChat"
-      :icons="icons"
-      :open="openChat"
-      :showEmoji="true"
-      :showFile="true"
-      :showEdition="true"
-      :showDeletion="true"
-      :showTypingIndicator="showTypingIndicator"
-      :showLauncher="true"
-      :showCloseButton="true"
-      :colors="colors"
-      :alwaysScrollToBottom="alwaysScrollToBottom"
-      :messageStyling="messageStyling"
-      @onType="handleOnType"
-      @edit="editMessage" />
+    <beautiful-chat :participants="participants" :titleImageUrl="titleImageUrl" :onMessageWasSent="onMessageWasSent" :messageList="messageList" :newMessagesCount="newMessagesCount" :isOpen="isChatOpen" :close="closeChat" :icons="icons" :open="openChat" :showEmoji="true" :showFile="true" :showEdition="true" :showDeletion="true" :showTypingIndicator="showTypingIndicator" :showLauncher="true" :showCloseButton="true" :colors="colors" :alwaysScrollToBottom="alwaysScrollToBottom" :messageStyling="messageStyling" @onType="handleOnType" @edit="editMessage" />
   </v-app>
 </template>
 
@@ -68,26 +61,33 @@ import CloseIcon from './assets/icons/close-icon.png';
 import OpenIcon from './assets/icons/logo-no-bg.svg';
 import FileIcon from './assets/icons/file.svg';
 import CloseIconSvg from './assets/icons/close.svg';
- 
+
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
-      drawer: true, group: null,
-      icons:{
-        open:{
+      drawer: true,
+      group: null,
+      menuAdmins: [
+        ['Gerenciar', 'mdi-cog-outline', '/usuarios'],
+      ],
+      menuPubli: [
+        ['Gerenciar', 'mdi-cog-outline', '/publicacoes'],
+      ],
+      icons: {
+        open: {
           img: OpenIcon,
           name: 'default',
         },
-        close:{
+        close: {
           img: CloseIcon,
           name: 'default',
         },
-        file:{
+        file: {
           img: FileIcon,
           name: 'default',
         },
-        closeSvg:{
+        closeSvg: {
           img: CloseIconSvg,
           name: 'default',
         },
@@ -106,9 +106,9 @@ export default {
       ], // the list of all the participant of the conversation. `name` is the user name, `id` is used to establish the author of a message, `imageUrl` is supposed to be the user avatar.
       titleImageUrl: 'https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png',
       messageList: [
-          { type: 'text', author: `me`, data: { text: `Olá meus amigos!` } },
-          { type: 'text', author: `user1`, data: { text: `Olá, seja bem-vindo.` } },
-          { type: 'text', author: `user2`, data: { text: `Alguém precisa de um ferreiro?` } }
+        { type: 'text', author: `me`, data: { text: `Olá meus amigos!` } },
+        { type: 'text', author: `user1`, data: { text: `Olá, seja bem-vindo.` } },
+        { type: 'text', author: `user2`, data: { text: `Alguém precisa de um ferreiro?` } }
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: false, // to determine whether the chat window should be open or closed
@@ -150,7 +150,7 @@ export default {
     },
     onMessageWasSent (message) {
       // called when the user sends a message
-      this.messageList = [ ...this.messageList, message ]
+      this.messageList = [...this.messageList, message]
     },
     openChat () {
       // called when the user clicks on the fab button to open the chat
@@ -168,8 +168,8 @@ export default {
     handleOnType () {
       console.log('Emit typing event')
     },
-    editMessage(message){
-      const m = this.messageList.find(m=>m.id === message.id);
+    editMessage (message) {
+      const m = this.messageList.find(m => m.id === message.id);
       m.isEdited = true;
       m.data.text = message.data.text;
     }
@@ -178,7 +178,7 @@ export default {
 </script>
 
 <style>
-  #main {
-    margin: 35px;
-  }
+#main {
+  margin: 35px;
+}
 </style>

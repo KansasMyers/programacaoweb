@@ -8,7 +8,7 @@ import Chat from 'vue-beautiful-chat';
 Vue.config.productionTip = false;
 
 Vue.prototype.$app = {
-  name: "Study Partners",
+  name: "Scientia Collab",
 };
 
 initDb();
@@ -23,7 +23,7 @@ new Vue({
     $route: {
         immediate: true,
         handler(to) {
-            document.title = to.meta.title || 'Some Default Title';
+            document.title = to.meta.title || '';
         }
     },
   }

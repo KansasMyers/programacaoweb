@@ -93,6 +93,9 @@
       <v-icon small @click="deleteItem(item)">
         mdi-delete
       </v-icon>
+      <v-icon small @click="navegar(item.publicacao_id)">
+        mdi-account
+      </v-icon>
     </template>
   </v-data-table>
 </template>
@@ -134,6 +137,10 @@ export default {
   },
 
   methods: {
+    navegar (publiId) {
+      this.$router.push({ path: `/publicacao-perfil/${publiId}` })
+    },
+
     retornaUsuarioPubli(value) {
       let usuario = UsersDB.findOne({ usuario_id: value });
       return usuario.nome + ' ' + usuario.sobrenome;

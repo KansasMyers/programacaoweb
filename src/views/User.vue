@@ -69,6 +69,9 @@
       <v-icon small @click="deleteItem(item)">
         mdi-delete
       </v-icon>
+      <v-icon small @click="navegar(item.usuario_id)">
+        mdi-account
+      </v-icon>
     </template>
   </v-data-table>
 </template>
@@ -108,6 +111,10 @@ export default {
   },
 
   methods: {
+    navegar (userId) {
+      this.$router.push({ path: `/usuarios-perfil/${userId}` })
+    },
+
     initialize () {
       this.users = UsersDB.get();
     },

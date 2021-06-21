@@ -47,6 +47,18 @@ export default {
         year: '26/05/2021',
         text: 'Criado um chat global para todos os usuários poderem se comunicarem.',
         header: 'Feature'
+      },
+      {
+        color: 'cyan',
+        year: '17/06/2021',
+        text: 'Criado telas de perfis de usuário.',
+        header: 'Feature'
+      },
+      {
+        color: 'cyan',
+        year: '21/06/2021',
+        text: 'Criado telas de perfis de publicação e finalização do trabalho para a 3º VA.',
+        header: 'Feature'
       }
     ],
   }),
